@@ -11,13 +11,19 @@ class ApplicationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request): view
     {
+
+    $status = $request->query('status');
         $applications = Application::query()
+        ->when($status, function ($query, $status) {
+                return $query->where('status', $status);
+            })
             ->latest('applied_at')
             ->get();
 
-        return view('applications.index', compact('applications'));
+
+        return view('applications.index', compact('applications', 'status'));
     }
 
     /**
